@@ -1,4 +1,12 @@
 # fsm_controller.py
+'''
+0 - 출발
+1 - 현재속도 != 목표속도 and 전방곡률 < 임계값2
+2 - 현재속도 = 목표속도 and  전방곡률 < 임계값2
+3 - 임계값2 <= 전방곡률 < 임계값1  -> 목표속도 조정1
+4 - 임계값1 <= 전방곡률   ->  목표속도 조정2
+5,6,7,8 - 제거 필요요
+'''
 
 import rospy
 from enum import Enum
@@ -23,12 +31,11 @@ class FSMState(Enum):
 class FSMController:
     def __init__(self, waypoints):
         self.state = FSMState.INIT
-        self.target_velocity = rospy.get_param('~target_velocity', 2.0)
-        self.max_velocity = rospy.get_param('~max_velocity', 3.0)
-        self.min_velocity = rospy.get_param('~min_velocity', 0.0)
+        self.target_velocity = rospy.get_param('~target_velocity', 30.0)#stanley가 여기서 목표속도 참조
+        self.min_velocity = rospy.get_param('~min_velocity', 5.0)
         self.curvature_threshold = rospy.get_param('~curvature_threshold', 0.05)
         self.hard_turn_threshold = rospy.get_param('~hard_turn_threshold', 0.15)
-
+        self.lookahead
         self.velocity = 0.0
         self.prev_velocity = None
         self.yaw = 0.0
